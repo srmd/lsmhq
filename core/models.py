@@ -22,11 +22,16 @@ class Player(models.Model):
     date_of_birth = models.DateField(blank=True, null=True)
     workplace = models.ForeignKey('Workplace', blank=True, null=True)
     cip = models.CharField(max_length=6, blank=True, null=True)
-    work_number = models.CharField(max_length=50, blank=True, null=True)
-    home_number = models.CharField(max_length=50, blank=True, null=True)
-    cell_number = models.CharField(max_length=50, blank=True, null=True)
-    work_email = models.EmailField(blank=True, null=True)
-    home_email = models.EmailField(blank=True, null=True)
+    work_number = models.CharField('number (work)',
+                                   max_length=50, blank=True, null=True)
+    home_number = models.CharField('number (home)',
+                                   max_length=50, blank=True, null=True)
+    cell_number = models.CharField('number (cell)',
+                                   max_length=50, blank=True, null=True)
+    work_email = models.EmailField('email (work)',
+                                   blank=True, null=True)
+    home_email = models.EmailField('email (home)',
+                                   blank=True, null=True)
 
     @property
     def full_name(self):
