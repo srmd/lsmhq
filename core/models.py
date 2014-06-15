@@ -8,7 +8,7 @@ def current_year():
     return datetime.date.today().year
 
 
-def make_choices(choices, *extra):
+def choices(choices, *extra):
     return [(choice, str(choice)) for choice in choices] + list(extra)
 
 
@@ -86,20 +86,19 @@ class PlayerMatchInfo(models.Model):
     match = models.ForeignKey(Match)
     rating = models.PositiveIntegerField()
     available = models.BooleanField(default=True)
-    position_A = models.PositiveIntegerField(choices=make_choices((1,2,3,4)))
-    position_M = models.PositiveIntegerField(choices=make_choices((1,2,3,4)))
-    position_D = models.PositiveIntegerField(choices=make_choices((1,2,3,4)))
-    position_G = models.PositiveIntegerField(choices=make_choices((1,2,3,4)))
-
+    position_A = models.PositiveIntegerField(choices=choices((1, 2, 3, 4)))
+    position_M = models.PositiveIntegerField(choices=choices((1, 2, 3, 4)))
+    position_D = models.PositiveIntegerField(choices=choices((1, 2, 3, 4)))
+    position_G = models.PositiveIntegerField(choices=choices((1, 2, 3, 4)))
 
     team = models.CharField(max_length=1, null=True, default=None,
-                            choices=[(None, 'N/A')] + make_choices('12'))
-    position = models.CharField(max_length=1, choices=make_choices('AMDG'))
+                            choices=[(None, 'N/A')] + choices('12'))
+    position = models.CharField(max_length=1, choices=choices('AMDG'))
 
     yellow_cards = models.PositiveIntegerField(default=0)
     red_cards = models.PositiveIntegerField(default=0)
     star = models.CharField(max_length=1, null=True, default=None,
-                            choices=[(None, 'N/A')] + make_choices('123'))
+                            choices=[(None, 'N/A')] + choices('123'))
 
     def __unicode__(self):
         return '%s (%s)' % (self.player.full_name, self.match)

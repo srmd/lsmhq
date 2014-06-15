@@ -7,12 +7,14 @@ from core.models import PlayerMatchInfo, Goal
 admin.site.unregister(Group)
 admin.site.unregister(User)
 
+
 class PlayerAdminForm(forms.ModelForm):
     class Meta:
         model = Player
         labels = {
             'cip': 'CIP'
         }
+
 
 class PlayerAdmin(admin.ModelAdmin):
     form = PlayerAdminForm
