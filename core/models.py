@@ -9,7 +9,7 @@ def current_year():
 
 
 def make_choices(choices, *extra):
-    return [(choice, choice) for choice in choices] + list(extra)
+    return [(choice, str(choice)) for choice in choices] + list(extra)
 
 
 class Player(models.Model):
@@ -17,7 +17,6 @@ class Player(models.Model):
     last_name = models.CharField(max_length=50)
     sex = models.CharField(max_length=1,
                            choices=(('M', 'Male'), ('F', 'Female')))
-    year_joined = models.PositiveIntegerField(default=current_year)
 
     date_of_birth = models.DateField(blank=True, null=True)
     workplace = models.ForeignKey('Workplace', blank=True, null=True)
@@ -48,7 +47,7 @@ class Workplace(models.Model):
         return self.address
 
 
-class PlayerSeasonAdmin(models.Model):
+class PlayerSeasonInfo(models.Model):
     player = models.ForeignKey(Player)
     year = models.PositiveIntegerField(default=current_year)
     type = models.CharField(max_length=1,
@@ -63,49 +62,53 @@ class PlayerSeasonAdmin(models.Model):
     def __unicode__(self):
         return '%s (%d)' % (self.player.full_name, self.year)
 
-    class Meta:
-        verbose_name_plural = "player season admin"
-
 
 class Match(models.Model):
     date = models.DateField()
+    cancelled = models.BooleanField(default=False)
+
+    def status(self):
+        if self.cancelled:
+            return 'Cancelled'
+        if datetime.date.today() < self.date:
+            return 'Pending'
+        return 'Played'
 
     def __unicode__(self):
-        return self.date.strftime('%B %d %Y')
+        return '%s: %s' % (self.date.strftime('%B %d %Y'), self.status())
 
     class Meta:
         verbose_name_plural = "matches"
 
 
-class PlayerAvailability(models.Model):
+class PlayerMatchInfo(models.Model):
     player = models.ForeignKey(Player)
     match = models.ForeignKey(Match)
     rating = models.PositiveIntegerField()
     available = models.BooleanField(default=True)
-
-    def __unicode__(self):
-        return '%s rated %d on %s: %s' % (self.player.full_name, self.rating,
-                                          self.match, self.available)
-
-    class Meta:
-        verbose_name_plural = "player availabilities"
+    position_A = models.PositiveIntegerField(choices=make_choices((1,2,3,4)))
+    position_M = models.PositiveIntegerField(choices=make_choices((1,2,3,4)))
+    position_D = models.PositiveIntegerField(choices=make_choices((1,2,3,4)))
+    position_G = models.PositiveIntegerField(choices=make_choices((1,2,3,4)))
 
 
-class PlayerMatchStats(models.Model):
-    player = models.ForeignKey(Player)
-    match = models.ForeignKey(Match)
-    team = models.CharField(max_length=1, choices=make_choices('12'))
+    team = models.CharField(max_length=1, null=True, default=None,
+                            choices=[(None, 'N/A')] + make_choices('12'))
     position = models.CharField(max_length=1, choices=make_choices('AMDG'))
-    goals = models.PositiveIntegerField(default=0)
-    shootout_goals = models.PositiveIntegerField(default=0)
-    penalty_goals = models.PositiveIntegerField(default=0)
+
     yellow_cards = models.PositiveIntegerField(default=0)
     red_cards = models.PositiveIntegerField(default=0)
-    stars = models.CharField(max_length=1, null=True, default=None,
-                             choices=[(None, 'N/A')] + make_choices('123'))
+    star = models.CharField(max_length=1, null=True, default=None,
+                            choices=[(None, 'N/A')] + make_choices('123'))
 
     def __unicode__(self):
         return '%s (%s)' % (self.player.full_name, self.match)
 
-    class Meta:
-        verbose_name_plural = "player match stats"
+
+class Goal(models.Model):
+    player = models.ForeignKey(Player)
+    match = models.ForeignKey(Match)
+    minute = models.PositiveIntegerField(blank=True, null=True)
+    type = models.CharField(max_length=1,
+                            choices=(('R', 'Regular'), ('P', 'Penalty'),
+                                     ('O', 'Own'), ('S', 'Shootout')))
