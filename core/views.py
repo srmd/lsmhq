@@ -1,6 +1,6 @@
 from django.views import generic
 
-from core.models import Player
+from core.models import Match, Player, PlayerSeasonInfo
 
 
 class IndexView(generic.TemplateView):
@@ -14,6 +14,14 @@ class StatsView(generic.TemplateView):
 
 class AdminView(generic.TemplateView):
     template_name = 'core/admin.html'
+
+class MatchView(generic.ListView):
+    template_name = 'core/matches.html'
+    model = Match
+
+class SeasonView(generic.ListView):
+    template_name = 'core/season.html'
+    model = PlayerSeasonInfo
 
 class PlayersView(generic.ListView):
     template_name = 'core/players.html'
