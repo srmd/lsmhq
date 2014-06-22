@@ -1,0 +1,17 @@
+{% extends "core/base_layout.html" %}
+
+{% block navbar %}
+    {% url 'core:matches' as matches_url %}
+    {% url 'core:season' as season_url %}
+    {% url 'core:players' as players_url %}
+    {% url 'core:player_create' as player_create_url %}
+    <li {% if request.path == matches_url %}class="active"{% endif %}>
+        <a href="{{ matches_url }}">Matchs</a>
+    </li>
+    <li {% if request.path == season_url %}class="active"{% endif %}>
+        <a href="{{ season_url }}">Saison</a>
+    </li>
+    <li {% if request.path == players_url or request.path == player_create_url %}class="active"{% endif %}>
+        <a href="{{ players_url }}">Joueurs</a>
+    </li>
+{% endblock %}
