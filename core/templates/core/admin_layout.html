@@ -33,15 +33,9 @@
         </div>
         <div class="collapse navbar-collapse">
           <ul class="nav navbar-nav">
-            {% url 'core:calendar' as calendar_url %}
-            {% url 'core:stats' as stats_url %}
-            <li {% if request.path == calendar_url %}class="active"{% endif %}>
-                <a href="{{ calendar_url }}">Calendrier</a>
-            </li>
-            <li {% if request.path == stats_url %}class="active"{% endif %}>
-                <a href="{{ stats_url }}">Statistiques</a>
-            </li>
-            <li> <a href="{% url 'core:admin' %}">Adminisitration</a> </li>
+            <li><a href="{% url 'core:admin' %}">Matchs</a></li>
+            <li><a href="{% url 'core:admin' %}">Saison</a></li>
+            <li><a href="{% url 'core:players' %}">Joueurs</a></li>
           </ul>
         </div><!--/.nav-collapse -->
       </div>
