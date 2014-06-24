@@ -1,24 +1,34 @@
 {% extends "core/admin_layout.html" %}
 
 {% block body %}
-<h1>Joueurs</h1>
-<p>
-    <a href="{% url 'core:player_create' %}" class="btn btn-default" role="button">Ajouter</a>
-</p>
-<table class="table table-striped">
-    <thead>
+<div class="panel panel-default">
+    <div class="panel-heading">
+        <h1>Joueurs
+            <a href="{% url 'core:player_create' %}" class="btn btn-default" role="button">
+                Ajouter <span class="glyphicon glyphicon-plus-sign"></span>
+            </a>
+        </h1>
+    </div>
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Prénom</th>
+                <th>Nom</th>
+                <th>Sexe</th>
+                <th></th>
+            </tr>
+        </thead>
+        {% for player in player_list %}
         <tr>
-            <th>Prénom</th>
-            <th>Nom</th>
-            <th>Sexe</th>
+            <td>{{ player.first_name }}</td>
+            <td>{{ player.last_name }}</td>
+            <td>{{ player.sex }}</td>
+            <td><a href="{% url 'core:player_update' player.id %}">
+                <span class="glyphicon glyphicon-pencil"></span>
+            </a>
+            </td>
         </tr>
-    </thead>
-    {% for player in player_list %}
-        <tr>
-            <td>{{ player.first_name }}</th>
-            <td>{{ player.last_name }}</th>
-            <td>{{ player.sex }}</th>
-        </tr>
-    {% endfor %}
-</table>
+        {% endfor %}
+    </table>
+</div>
 {% endblock %}

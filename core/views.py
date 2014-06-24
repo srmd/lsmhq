@@ -1,3 +1,4 @@
+from django.core.urlresolvers import reverse_lazy
 from django.views import generic
 
 from core.models import Match, Player, PlayerSeasonInfo
@@ -30,3 +31,9 @@ class PlayersView(generic.ListView):
 class PlayerCreate(generic.edit.CreateView):
     model = Player
     template_name_suffix = '_create'
+    success_url = reverse_lazy('core:players')
+
+class PlayerUpdate(generic.edit.UpdateView):
+    model = Player
+    template_name_suffix = '_create'
+    success_url = reverse_lazy('core:players')
