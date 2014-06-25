@@ -5,7 +5,7 @@
     <div class="panel-heading">
         <h1>Joueurs
             <a href="{% url 'core:player_create' %}" class="btn btn-default" role="button">
-                Ajouter <span class="glyphicon glyphicon-plus-sign"></span>
+                Ajouter <span class="glyphicon glyphicon-plus"></span>
             </a>
         </h1>
     </div>
@@ -16,6 +16,7 @@
                 <th>Nom</th>
                 <th>Sexe</th>
                 <th></th>
+                <th></th>
             </tr>
         </thead>
         {% for player in player_list %}
@@ -25,10 +26,42 @@
             <td>{{ player.sex }}</td>
             <td><a href="{% url 'core:player_update' player.id %}">
                 <span class="glyphicon glyphicon-pencil"></span>
-            </a>
+                </a>
+            </td>
+            <td><a class="confirm" href="{% url 'core:player_delete' player.id %}">
+                <span class="glyphicon glyphicon-trash"></span>
+                </a>
             </td>
         </tr>
         {% endfor %}
     </table>
 </div>
+{% endblock %}
+
+{% block js %}
+<script src="//cdnjs.cloudflare.com/ajax/libs/bootbox.js/4.2.0/bootbox.min.js"></script>
+<script>
+    $(document).on("click", ".confirm", function(e) {
+        var link = $(this).attr("href");
+        e.preventDefault();
+        bootbox.confirm({
+            message: 'Êtes-vous certain de vouloir supprimer ce joueur?',
+            buttons: {
+                'cancel': {
+                    label: 'Annuler',
+                    className: 'btn-default'
+                },
+                'confirm': {
+                    label: 'Supprimer',
+                    className: 'btn-danger'
+                }
+            },
+            callback: function(result) {
+                if (result) {
+                    document.location.href = link;
+                }
+            }
+        });
+    });
+</script>
 {% endblock %}

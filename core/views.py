@@ -1,4 +1,6 @@
 from django.core.urlresolvers import reverse_lazy
+from django.http import HttpResponseRedirect
+from django.shortcuts import get_object_or_404
 from django.views import generic
 
 from core.models import Match, Player, PlayerSeasonInfo
@@ -37,3 +39,8 @@ class PlayerUpdate(generic.edit.UpdateView):
     model = Player
     template_name_suffix = '_create'
     success_url = reverse_lazy('core:players')
+
+def deletePlayer(request, player_id):
+    player = get_object_or_404(Player, pk=player_id)
+    player.delete()
+    return HttpResponseRedirect(reverse_lazy('core:players'))
