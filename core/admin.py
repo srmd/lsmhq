@@ -1,8 +1,7 @@
 from django import forms
 from django.contrib import admin
 from django.contrib.auth.models import Group, User
-from core.models import Player, Workplace, PlayerSeasonInfo, Match
-from core.models import PlayerMatchInfo, Goal
+from core.models import Player, PlayerSeasonInfo, Match, PlayerMatchInfo, Goal
 
 admin.site.unregister(Group)
 admin.site.unregister(User)
@@ -21,7 +20,6 @@ class PlayerAdmin(admin.ModelAdmin):
 
 
 admin.site.register(Player, PlayerAdmin)
-admin.site.register(Workplace)
 admin.site.register(PlayerSeasonInfo)
 admin.site.register(Match)
 admin.site.register(PlayerMatchInfo)

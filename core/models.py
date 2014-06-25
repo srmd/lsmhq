@@ -19,7 +19,7 @@ class Player(models.Model):
                            choices=(('M', 'Male'), ('F', 'Female')))
 
     date_of_birth = models.DateField(blank=True, null=True)
-    workplace = models.ForeignKey('Workplace', blank=True, null=True)
+    workplace = models.CharField(max_length=200, blank=True, null=True)
     cip = models.CharField(max_length=6, blank=True, null=True)
     work_number = models.CharField('number (work)',
                                    max_length=50, blank=True, null=True)
@@ -38,13 +38,6 @@ class Player(models.Model):
 
     def __unicode__(self):
         return self.full_name
-
-
-class Workplace(models.Model):
-    address = models.CharField(max_length=200)
-
-    def __unicode__(self):
-        return self.address
 
 
 class PlayerSeasonInfo(models.Model):
