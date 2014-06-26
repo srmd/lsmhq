@@ -10,6 +10,7 @@
         </h1>
     </div>
     <table class="table table-striped">
+      <form action="{% url 'core:player_delete' %}" method="post">{% csrf_token %}
         <thead>
             <tr>
                 <th>Prénom</th>
@@ -28,22 +29,29 @@
                 <span class="glyphicon glyphicon-pencil"></span>
                 </a>
             </td>
-            <td><a class="confirm" href="{% url 'core:player_delete' player.id %}">
+            <td>
+              <button type="submit" name="player_id" value="{{ player.id }}"
+                      style="padding: 0;" class="btn btn-link">
                 <span class="glyphicon glyphicon-trash"></span>
-                </a>
+              </button>
             </td>
         </tr>
         {% endfor %}
-    </table>
+    </form>
+  </table>
 </div>
 {% endblock %}
 
 {% block js %}
 <script src="//cdnjs.cloudflare.com/ajax/libs/bootbox.js/4.2.0/bootbox.min.js"></script>
 <script>
-    $(document).on("click", ".confirm", function(e) {
-        var link = $(this).attr("href");
+$(function () {
+    $('button:submit').on('click', function (e, confirmed) {
+        if (confirmed) {
+            return;
+        }
         e.preventDefault();
+        var button = $(this);
         bootbox.confirm({
             message: 'Êtes-vous certain de vouloir supprimer ce joueur?',
             buttons: {
@@ -56,12 +64,13 @@
                     className: 'btn-danger'
                 }
             },
-            callback: function(result) {
+            callback: function (result) {
                 if (result) {
-                    document.location.href = link;
+                    button.trigger('click', true);
                 }
             }
         });
     });
+});
 </script>
 {% endblock %}
