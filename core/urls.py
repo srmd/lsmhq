@@ -12,5 +12,5 @@ urlpatterns = patterns('',
     url(r'^admin/players$', views.PlayersView.as_view(), name='players'),
     url(r'^admin/player_create$', views.PlayerCreate.as_view(), name='player_create'),
     url(r'^admin/player_update/(?P<pk>\d+)$', views.PlayerUpdate.as_view(), name='player_update'),
-    url(r'^admin/player_delete$', views.deletePlayer, name='player_delete'),
+    url(r'^admin/player_delete$', views.PlayerDelete.as_view(), name='player_delete'),
 )

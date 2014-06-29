@@ -40,8 +40,9 @@ class PlayerUpdate(generic.edit.UpdateView):
     template_name_suffix = '_create'
     success_url = reverse_lazy('core:players')
 
-def deletePlayer(request):
-    player_id = request.POST['player_id']
-    player = get_object_or_404(Player, pk=player_id)
-    player.delete()
-    return HttpResponseRedirect(reverse_lazy('core:players'))
+class PlayerDelete(generic.edit.DeleteView):
+    success_url = reverse_lazy('core:players')
+
+    def get_object(self):
+        player_id = self.request.POST['player_id']
+        return get_object_or_404(Player, pk=player_id)
