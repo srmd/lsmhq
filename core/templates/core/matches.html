@@ -1,0 +1,76 @@
+{% extends "core/admin_layout.html" %}
+
+{% block body %}
+<div class="panel panel-default">
+    <div class="panel-heading">
+        <h1>Matchs {{ season.year }}
+            <a href="{% url 'core:match_create' %}" class="btn btn-default" role="button">
+                Ajouter <span class="glyphicon glyphicon-plus"></span>
+            </a>
+        </h1>
+    </div>
+    <table class="table table-striped">
+      <form action="{% url 'core:match_delete' %}" method="post">{% csrf_token %}
+        <thead>
+            <tr>
+                <th>Date</th>
+                <th>Statut</th>
+                <th>Score</th>
+                <th></th>
+                <th></th>
+            </tr>
+        </thead>
+        {% for match in season_matches %}
+        <tr>
+            <td>{{ match.date }}</td>
+            <td>{{ match.status }}</td>
+            <td>{{ match.get_score }}</td>
+            <td><a href="{% url 'core:match_update' match.id %}">
+                <span class="glyphicon glyphicon-pencil"></span>
+                </a>
+            </td>
+            <td>
+              <button type="submit" name="match_id" value="{{ match.id }}"
+                      style="padding: 0;" class="btn btn-link">
+                <span class="glyphicon glyphicon-trash"></span>
+              </button>
+            </td>
+        </tr>
+        {% endfor %}
+    </form>
+  </table>
+</div>
+{% endblock %}
+
+{% block js %}
+<script src="//cdnjs.cloudflare.com/ajax/libs/bootbox.js/4.2.0/bootbox.min.js"></script>
+<script>
+$(function () {
+    $('button:submit').on('click', function (e, confirmed) {
+        if (confirmed) {
+            return;
+        }
+        e.preventDefault();
+        var button = $(this);
+        bootbox.confirm({
+            message: 'Êtes-vous certain de vouloir supprimer ce match?',
+            buttons: {
+                'cancel': {
+                    label: 'Annuler',
+                    className: 'btn-default'
+                },
+                'confirm': {
+                    label: 'Supprimer',
+                    className: 'btn-danger'
+                }
+            },
+            callback: function (result) {
+                if (result) {
+                    button.trigger('click', true);
+                }
+            }
+        });
+    });
+});
+</script>
+{% endblock %}
