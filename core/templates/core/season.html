@@ -1,6 +1,82 @@
 {% extends "core/admin_layout.html" %}
 
 {% block body %}
-<h1>SEASON</h1>
-<p class="lead">Use this document as a way to quickly start any new project.<br> All you get is this text and a mostly barebones HTML document.</p>
+<div class="panel panel-default">
+    <div class="panel-heading">
+        <h1>Saison {{ season.year }}
+            <a href="{% url 'core:season_update' season.id %}" class="btn btn-default" role="button">
+                Éditer <span class="glyphicon glyphicon-pencil"></span>
+            </a>
+        </h1>
+    </div>
+    <table class="table table-striped">
+      <form action="{% url 'core:season' season.id %}" method="post">{% csrf_token %}
+        <thead>
+            <tr>
+                <th>Prénom</th>
+                <th>Nom</th>
+                <th>Type</th>
+                <th>Dû</th>
+                <th>Payé</th>
+                <th>Méthode</th>
+                <th></th>
+                <th></th>
+            </tr>
+        </thead>
+        {% for season_player in season_players %}
+        <tr>
+            <td>{{ season_player.player.first_name }}</td>
+            <td>{{ season_player.player.last_name }}</td>
+            <td>{{ season_player.type }}</td>
+            <td>{{ season_player.owed }}</td>
+            <td>{{ season_player.paid }}</td>
+            <td>{{ season_player.payment_type }}</td>
+            <td><a href="{% url 'core:season' season_player.id %}">
+                <span class="glyphicon glyphicon-pencil"></span>
+                </a>
+            </td>
+            <td>
+              <button type="submit" name="season_player_id" value="{{ season_player.id }}"
+                      style="padding: 0;" class="btn btn-link">
+                <span class="glyphicon glyphicon-trash"></span>
+              </button>
+            </td>
+        </tr>
+        {% endfor %}
+    </form>
+  </table>
+</div>
+{% endblock %}
+
+{% block js %}
+<script src="//cdnjs.cloudflare.com/ajax/libs/bootbox.js/4.2.0/bootbox.min.js"></script>
+<script>
+$(function () {
+    $('button:submit').on('click', function (e, confirmed) {
+        if (confirmed) {
+            return;
+        }
+        e.preventDefault();
+        var button = $(this);
+        bootbox.confirm({
+            message: 'Êtes-vous certain de vouloir supprimer ce joueur?',
+            buttons: {
+                'cancel': {
+                    label: 'Annuler',
+                    className: 'btn-default'
+                },
+                'confirm': {
+                    label: 'Supprimer',
+                    className: 'btn-danger'
+                }
+            },
+            callback: function (result) {
+                if (result) {
+                    button.trigger('click', true);
+                }
+            }
+        });
+    });
+});
+</script>
 {% endblock %}

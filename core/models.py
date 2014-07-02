@@ -40,9 +40,20 @@ class Player(models.Model):
         return self.full_name
 
 
+class Season(models.Model):
+    year = models.PositiveIntegerField(default=current_year)
+    regular_rate = models.DecimalField(max_digits=5, decimal_places=2,
+                               default=Decimal('0.00'))
+    substitute_rate = models.DecimalField(max_digits=5, decimal_places=2,
+                           default=Decimal('0.00'))
+
+    def __unicode__(self):
+        return 'Season %d' % self.year
+
+
 class PlayerSeasonInfo(models.Model):
     player = models.ForeignKey(Player)
-    year = models.PositiveIntegerField(default=current_year)
+    season = models.ForeignKey(Season)
     type = models.CharField(max_length=1,
                             choices=(('R', 'Regular'), ('S', 'Substitute')))
     owed = models.DecimalField(max_digits=5, decimal_places=2,
@@ -58,6 +69,7 @@ class PlayerSeasonInfo(models.Model):
 
 class Match(models.Model):
     date = models.DateField()
+    season = models.ForeignKey(Season)
     cancelled = models.BooleanField(default=False)
 
     def status(self):
@@ -66,6 +78,12 @@ class Match(models.Model):
         if datetime.date.today() < self.date:
             return 'Pending'
         return 'Played'
+
+    def get_score(self):
+        all_goals = Goal.objects.filter(match=self)
+        goals_by_team = [PlayerMatchInfo.objects.filter(player=goal.player,
+                         match=goal.match).team for goal in all_goals]
+        return '%d - %d' % (goals_by_team.count('1'), goals_by_team.count('2'))
 
     def __unicode__(self):
         return '%s: %s' % (self.date.strftime('%B %d %Y'), self.status())
@@ -104,3 +122,6 @@ class Goal(models.Model):
     type = models.CharField(max_length=1,
                             choices=(('R', 'Regular'), ('P', 'Penalty'),
                                      ('O', 'Own'), ('S', 'Shootout')))
+
+    def __unicode__(self):
+        return '%s (%s)' % (self.player.full_name, self.match)
