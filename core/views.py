@@ -48,9 +48,9 @@ class SeasonView(generic.TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super(SeasonView, self).get_context_data(**kwargs)
-        context['players'] = Player.objects.all()
+        context['players'] = Player.objects.exclude(playerseasoninfo__season__year__exact=self.kwargs['year'])
         context['season'] = Season.objects.get(year=self.kwargs['year'])
-        context['season_players'] = PlayerSeasonInfo.objects.filter(season__year=self.kwargs['year'])
+        context['season_players'] = PlayerSeasonInfo.objects.filter(season__year__exact=self.kwargs['year'])
         return context
 
 class SeasonCreate(generic.edit.CreateView):
@@ -66,6 +66,10 @@ class SeasonUpdate(generic.edit.UpdateView):
 
     def get_success_url(self):
         return reverse_lazy('core:season', kwargs={'year':self.object.year})
+
+class SeasonDelete(generic.edit.DeleteView):
+    model = Season
+    success_url = reverse_lazy('core:admin')
 
 class PlayersView(generic.ListView):
     template_name = 'core/players.html'

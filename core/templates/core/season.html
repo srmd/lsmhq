@@ -4,47 +4,68 @@
 <div class="panel panel-default">
     <div class="panel-heading">
         <h1>Saison {{ season.year }}
+            <button class="btn btn-default" data-toggle="modal" data-target="#myModal">
+                <span class="glyphicon glyphicon-plus"></span> Joueurs
+            </button>
+            <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                            <h4 class="modal-title" id="myModalLabel">Joueurs disponibles</h4>
+                        </div>
+                        <div class="modal-body">
+                            ...
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-default" data-dismiss="modal">Annuler</button>
+                            <button type="button" class="btn btn-primary">Ajouter</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
             <a href="{% url 'core:season_update' season.id %}" class="btn btn-default" role="button">
-                Éditer <span class="glyphicon glyphicon-pencil"></span>
+                <span class="glyphicon glyphicon-pencil"></span> Saison
             </a>
         </h1>
     </div>
     <table class="table table-striped">
-      <form action="{% url 'core:season' season.id %}" method="post">{% csrf_token %}
-        <thead>
+        <form action="{% url 'core:season' season.id %}" method="post">{% csrf_token %}
+            <thead>
+                <tr>
+                    <th>Prénom</th>
+                    <th>Nom</th>
+                    <th>Type</th>
+                    <th>Dû ($)</th>
+                    <th>Payé ($)</th>
+                    <th>Méthode</th>
+                    <th>Solde ($)</th>
+                    <th></th>
+                    <th></th>
+                </tr>
+            </thead>
+            {% for season_player in season_players %}
             <tr>
-                <th>Prénom</th>
-                <th>Nom</th>
-                <th>Type</th>
-                <th>Dû</th>
-                <th>Payé</th>
-                <th>Méthode</th>
-                <th></th>
-                <th></th>
-            </tr>
-        </thead>
-        {% for season_player in season_players %}
-        <tr>
-            <td>{{ season_player.player.first_name }}</td>
-            <td>{{ season_player.player.last_name }}</td>
-            <td>{{ season_player.type }}</td>
-            <td>{{ season_player.owed }}</td>
-            <td>{{ season_player.paid }}</td>
-            <td>{{ season_player.payment_type }}</td>
-            <td><a href="{% url 'core:season' season_player.id %}">
-                <span class="glyphicon glyphicon-pencil"></span>
+                <td>{{ season_player.player.first_name }}</td>
+                <td>{{ season_player.player.last_name }}</td>
+                <td>{{ season_player.type }}</td>
+                <td>{{ season_player.owed }}</td>
+                <td>{{ season_player.paid }}</td>
+                <td>{{ season_player.payment_type }}</td>
+                <td><a href="{% url 'core:season' season_player.id %}">
+                    <span class="glyphicon glyphicon-pencil"></span>
                 </a>
             </td>
             <td>
-              <button type="submit" name="season_player_id" value="{{ season_player.id }}"
-                      style="padding: 0;" class="btn btn-link">
+                <button type="submit" name="season_player_id" value="{{ season_player.id }}"
+                style="padding: 0;" class="btn btn-link season_player_delete">
                 <span class="glyphicon glyphicon-trash"></span>
-              </button>
-            </td>
-        </tr>
-        {% endfor %}
-    </form>
-  </table>
+            </button>
+        </td>
+    </tr>
+    {% endfor %}
+</form>
+</table>
 </div>
 {% endblock %}
 
@@ -52,7 +73,7 @@
 <script src="//cdnjs.cloudflare.com/ajax/libs/bootbox.js/4.2.0/bootbox.min.js"></script>
 <script>
 $(function () {
-    $('button:submit').on('click', function (e, confirmed) {
+    $('.season_player_delete:submit').on('click', function (e, confirmed) {
         if (confirmed) {
             return;
         }
