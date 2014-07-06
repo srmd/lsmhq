@@ -63,6 +63,10 @@ class PlayerSeasonInfo(models.Model):
     payment_type = models.CharField(max_length=2,
                                     choices=(('CA', 'Cash'), ('CH', 'Cheque')))
 
+    @property
+    def balance(self):
+        return self.owed - self.paid
+
     def __unicode__(self):
         return '%s (%d)' % (self.player.full_name, self.year)
 

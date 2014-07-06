@@ -11,10 +11,11 @@
         {% for season in season_list %}
             <li><a href="{% url 'core:season' season %}">{{ season }}</a></li>
         {% endfor %}
-        <li class="divider"></li>
+        {% if season_list %}<li class="divider"></li>{% endif %}
         <li><a href="{% url 'core:season_create' %}">Nouvelle saison</a></li>
     </ul>
 </li>
+{% if season_list %}
 <li class="dropdown {% if current_url == "matches" %}active{% endif %}">
     <a href="#" class="dropdown-toggle" data-toggle="dropdown">Matchs <span class="caret"></span></a>
     <ul class="dropdown-menu" role="menu">
@@ -23,5 +24,6 @@
         {% endfor %}
     </ul>
 </li>
+{% endif %}
 {% endwith %}
 {% endblock %}

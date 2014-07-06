@@ -1,9 +1,13 @@
 from django.core.urlresolvers import reverse_lazy
+from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404
 from django.views import generic
 
 from core.models import Match, Player, PlayerSeasonInfo, Season
 
+class ObjectFromPostMixin(object):
+    def get_object(self):
+        return get_object_or_404(self.model, pk=self.request.POST['id'])
 
 class IndexView(generic.TemplateView):
     template_name = 'core/index.html'
@@ -67,9 +71,26 @@ class SeasonUpdate(generic.edit.UpdateView):
     def get_success_url(self):
         return reverse_lazy('core:season', kwargs={'year':self.object.year})
 
-class SeasonDelete(generic.edit.DeleteView):
+    def get_object(self):
+        return get_object_or_404(Season, year=self.kwargs['year'])
+
+class SeasonDelete(ObjectFromPostMixin, generic.edit.DeleteView):
     model = Season
     success_url = reverse_lazy('core:admin')
+
+def SeasonPlayersCreate(request, pk):
+    PlayerSeasonInfo.objects.bulk_create([
+        PlayerSeasonInfo(player_id=key, season_id=pk, type=val)
+        for key, val in request.POST.items()
+        if key != 'csrfmiddlewaretoken' and val
+    ])
+    return HttpResponseRedirect(reverse_lazy('core:season', kwargs={'year':Season.objects.get(pk=pk).year}))
+
+class SeasonPlayerDelete(ObjectFromPostMixin, generic.edit.DeleteView):
+    model = PlayerSeasonInfo
+
+    def get_success_url(self):
+        return reverse_lazy('core:season', kwargs={'year':self.object.season.year})
 
 class PlayersView(generic.ListView):
     template_name = 'core/players.html'
@@ -85,9 +106,6 @@ class PlayerUpdate(generic.edit.UpdateView):
     template_name_suffix = '_create'
     success_url = reverse_lazy('core:players')
 
-class PlayerDelete(generic.edit.DeleteView):
+class PlayerDelete(ObjectFromPostMixin, generic.edit.DeleteView):
+    model = Player
     success_url = reverse_lazy('core:players')
-
-    def get_object(self):
-        player_id = self.request.POST['player_id']
-        return get_object_or_404(Player, pk=player_id)

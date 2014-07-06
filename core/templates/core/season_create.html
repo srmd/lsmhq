@@ -15,36 +15,39 @@
             <div class="form-group col-lg-4">
                 <label for="year">Année</label>
                 <input type="text" value="{{ form.year.value|default:'' }}"
-                       name="year" class="form-control" id="year"
-                       placeholder="yyyy">
+                name="year" class="form-control" id="year"
+                placeholder="yyyy">
             </div>
             <div class="form-group col-lg-4">
                 <label for="regular_rate">Tarif régulier ($)</label>
                 <input type="text" value="{{ form.regular_rate.value|default:'' }}"
-                       name="regular_rate" class="form-control" id="regular_rate"
-                       placeholder="0.00">
+                name="regular_rate" class="form-control" id="regular_rate"
+                placeholder="0.00">
             </div>
             <div class="form-group col-lg-4">
                 <label for="substitute_rate">Tarif remplaçant ($/match)</label>
                 <input type="text" value="{{ form.substitute_rate.value|default:'' }}"
-                       name="substitute_rate" class="form-control" id="substitute_rate"
-                       placeholder="0.00">
+                name="substitute_rate" class="form-control" id="substitute_rate"
+                placeholder="0.00">
             </div>
             <div class="col-lg-1">
                 <button type="submit" class="btn btn-default">
-                        {% if form.instance.pk %}Modifier
-                        {% else %} Ajouter
-                        {% endif %}
+                    {% if form.instance.pk %}Modifier
+                    {% else %} Ajouter
+                    {% endif %}
                 </button>
             </div>
         </form>
-        <form action="{% url 'core:season_delete' season.id %}" role="form" method="post">{% csrf_token %}
+        {% if form.instance.pk %}
+        <form action="{% url 'core:season_delete' %}" role="form" method="post">{% csrf_token %}
             <div class="col-lg-1">
-                <button type="submit" class="btn btn-danger season_delete">
+                <button type="submit" name="id" value="{{ season.id }}"
+                        class="btn btn-danger season_delete">
                         Supprimer
                 </button>
             </div>
         </form>
+        {% endif %}
     </div>
 </div>
 {% endblock %}
