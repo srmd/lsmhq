@@ -1,0 +1,63 @@
+{% extends "core/admin_layout.html" %}
+
+{% block body %}
+
+{{ form.errors }}
+<div class="panel panel-default">
+    <div class="panel-heading">
+        <h1>{{ form.instance.player.full_name }} ({{ form.instance.season.year }})
+        </h1>
+    </div>
+    <div class="panel-body">
+        <form action="" role="form" method="post">{% csrf_token %}
+            <div class="form-group col-lg-4">
+                <label for="type">Type</label>
+                <select class="form-control" name="type" id="type">
+                    <option value="R"
+                        {% if form.type.value == "R" %}
+                        selected="selected"
+                        {% endif %}>
+                        Régulier
+                    </option>
+                    <option value="S"
+                        {% if form.type.value == "S" %}
+                        selected="selected"
+                        {% endif %}>
+                        Remplaçant
+                    </option>
+                </select>
+            </div>
+            <div class="form-group col-lg-4">
+                <label for="paid">Payé ($)</label>
+                <input type="text" value="{{ form.paid.value|default:'' }}"
+                name="paid" class="form-control" id="paid"
+                placeholder="0.00">
+            </div>
+            <div class="form-group col-lg-4">
+                <label for="payment_type">Méthode</label>
+                <select class="form-control" name="payment_type" id="payment_type">
+                    <option value="CA"
+                        {% if form.payment_type.value == "CA" %}
+                        selected="selected"
+                        {% endif %}>
+                        Cash
+                    </option>
+                    <option value="CH"
+                        {% if form.payment_type.value == "CH" %}
+                        selected="selected"
+                        {% endif %}>
+                        Cheque
+                    </option>
+                </select>
+            </div>
+            <input type="hidden" value="{{ form.player.value }}" name="player">
+            <input type="hidden" value="{{ form.season.value }}" name="season">
+            <input type="hidden" value="{{ form.owed.value }}" name="owed">
+            <div class="col-lg-1">
+                <button type="submit" class="btn btn-default">Modifier</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+{% endblock %}

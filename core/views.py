@@ -86,6 +86,13 @@ def SeasonPlayersCreate(request, pk):
     ])
     return HttpResponseRedirect(reverse_lazy('core:season', kwargs={'year':Season.objects.get(pk=pk).year}))
 
+class SeasonPlayerUpdate(generic.edit.UpdateView):
+    model = PlayerSeasonInfo
+    template_name = 'core/season_player_update.html'
+
+    def get_success_url(self):
+        return reverse_lazy('core:season', kwargs={'year':self.object.season.year})
+
 class SeasonPlayerDelete(ObjectFromPostMixin, generic.edit.DeleteView):
     model = PlayerSeasonInfo
 

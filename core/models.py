@@ -56,8 +56,6 @@ class PlayerSeasonInfo(models.Model):
     season = models.ForeignKey(Season)
     type = models.CharField(max_length=1,
                             choices=(('R', 'Regular'), ('S', 'Substitute')))
-    owed = models.DecimalField(max_digits=5, decimal_places=2,
-                               default=Decimal('0.00'))
     paid = models.DecimalField(max_digits=5, decimal_places=2,
                                default=Decimal('0.00'))
     payment_type = models.CharField(max_length=2,
@@ -66,6 +64,17 @@ class PlayerSeasonInfo(models.Model):
     @property
     def balance(self):
         return self.owed - self.paid
+
+    @property
+    def games_played(self):
+        return len(PlayerMatchInfo.objects.filter(player=self.player, match__season=self.season))
+
+    @property
+    def owed(self):
+        if self.type == 'R':
+            return self.season.regular_rate
+        elif self.type == 'S':
+            return self.season.substitute_rate*self.games_played
 
     def __unicode__(self):
         return '%s (%d)' % (self.player.full_name, self.year)

@@ -67,9 +67,9 @@
                     <th>Prénom</th>
                     <th>Nom</th>
                     <th>Type</th>
+                    <th>Matchs</th>
                     <th>Dû ($)</th>
                     <th>Payé ($)</th>
-                    <th>Méthode</th>
                     <th>Solde ($)</th>
                     <th></th>
                     <th></th>
@@ -80,11 +80,11 @@
                 <td>{{ season_player.player.first_name }}</td>
                 <td>{{ season_player.player.last_name }}</td>
                 <td>{{ season_player.get_type_display }}</td>
+                <td>{{ season_player.games_played }}</td>
                 <td>{{ season_player.owed|floatformat:2 }}</td>
                 <td>{{ season_player.paid|floatformat:2 }}</td>
-                <td>{{ season_player.payment_type }}</td>
                 <td>{{ season_player.balance|floatformat:2 }}</td>
-                <td><a href="{% url 'core:season' season_player.id %}">
+                <td><a href="{% url 'core:season_player_update' season_player.id %}">
                     <span class="glyphicon glyphicon-pencil"></span>
                 </a>
             </td>
