@@ -47,6 +47,15 @@ class Season(models.Model):
     substitute_rate = models.DecimalField(max_digits=5, decimal_places=2,
                            default=Decimal('0.00'))
 
+    def owed(self):
+        return sum(x.owed for x in PlayerSeasonInfo.objects.filter(season=self))
+
+    def paid(self):
+        return sum(x.paid for x in PlayerSeasonInfo.objects.filter(season=self))
+
+    def balance(self):
+        return sum(x.balance for x in PlayerSeasonInfo.objects.filter(season=self))
+
     def __unicode__(self):
         return 'Season %d' % self.year
 
@@ -67,7 +76,7 @@ class PlayerSeasonInfo(models.Model):
 
     @property
     def games_played(self):
-        return len(PlayerMatchInfo.objects.filter(player=self.player, match__season=self.season))
+        return PlayerMatchInfo.objects.filter(player=self.player, match__season=self.season).count()
 
     @property
     def owed(self):

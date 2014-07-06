@@ -84,20 +84,33 @@
                 <td>{{ season_player.owed|floatformat:2 }}</td>
                 <td>{{ season_player.paid|floatformat:2 }}</td>
                 <td>{{ season_player.balance|floatformat:2 }}</td>
-                <td><a href="{% url 'core:season_player_update' season_player.id %}">
-                    <span class="glyphicon glyphicon-pencil"></span>
-                </a>
-            </td>
-            <td>
-                <button type="submit" name="id" value="{{ season_player.id }}"
-                style="padding: 0;" class="btn btn-link season_player_delete">
-                <span class="glyphicon glyphicon-trash"></span>
-            </button>
-        </td>
-    </tr>
-    {% endfor %}
-</form>
-</table>
+                <td><a href="{% url 'core:season_player_update' season.year season_player.id %}">
+                        <span class="glyphicon glyphicon-pencil"></span>
+                    </a>
+                </td>
+                <td>
+                    <button type="submit" name="id" value="{{ season_player.id }}"
+                        style="padding: 0;" class="btn btn-link season_player_delete">
+                        <span class="glyphicon glyphicon-trash"></span>
+                    </button>
+                </td>
+            </tr>
+            {% endfor %}
+            <tfoot>
+                <tr>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <th>Total:</th>
+                    <th>{{ season.owed|floatformat:2 }}</th>
+                    <th>{{ season.paid|floatformat:2 }}</th>
+                    <th>{{ season.balance|floatformat:2 }}</th>
+                    <td></td>
+                    <td></td>
+                </tr>
+            </tfoot>
+        </form>
+    </table>
 </div>
 {% endblock %}
 
