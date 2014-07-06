@@ -27,25 +27,38 @@ class MatchView(generic.TemplateView):
     def get_context_data(self, **kwargs):
         context = super(MatchView, self).get_context_data(**kwargs)
         context['season'] = Season.objects.get(year=self.kwargs['year'])
-        context['season_matches'] = Match.objects.filter(season__year=self.kwargs['year'])
+        context['season_matches'] = Match.objects.filter(season__year__exact=self.kwargs['year'])
         return context
 
 class MatchCreate(generic.edit.CreateView):
     model = Match
     template_name_suffix = '_create'
-    success_url = reverse_lazy('core:matches')
+
+    def get_success_url(self):
+        return reverse_lazy('core:matches', kwargs={'year':self.object.season.year})
+
+    def get_context_data(self, **kwargs):
+        context = super(MatchCreate, self).get_context_data(**kwargs)
+        context['season'] = Season.objects.get(year=self.kwargs['year'])
+        return context
 
 class MatchUpdate(generic.edit.UpdateView):
     model = Match
     template_name_suffix = '_create'
-    success_url = reverse_lazy('core:matches')
 
-class MatchDelete(generic.edit.DeleteView):
-    success_url = reverse_lazy('core:matches')
+    def get_success_url(self):
+        return reverse_lazy('core:matches', kwargs={'year':self.object.season.year})
 
-    def get_object(self):
-        match_id = self.request.POST['match_id']
-        return get_object_or_404(Match, pk=match_id)
+    def get_context_data(self, **kwargs):
+        context = super(MatchUpdate, self).get_context_data(**kwargs)
+        context['season'] = Season.objects.get(year=self.kwargs['year'])
+        return context
+
+class MatchDelete(ObjectFromPostMixin, generic.edit.DeleteView):
+    model = Match
+
+    def get_success_url(self):
+        return reverse_lazy('core:matches', kwargs={'year':self.object.season.year})
 
 class SeasonView(generic.TemplateView):
     template_name = 'core/season.html'
