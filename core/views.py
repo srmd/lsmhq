@@ -3,7 +3,7 @@ from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404
 from django.views import generic
 
-from core.models import Match, Player, PlayerSeasonInfo, Season
+from core.models import Match, Player, PlayerMatchInfo, PlayerSeasonInfo, Season
 
 class ObjectFromPostMixin(object):
     def get_object(self):
@@ -42,6 +42,15 @@ class MatchCreate(generic.edit.CreateView):
         context['season'] = Season.objects.get(year=self.kwargs['year'])
         return context
 
+    def form_valid(self, form):
+        response = super(MatchCreate, self).form_valid(form)
+        season_players = PlayerSeasonInfo.objects.filter(season__year__exact=self.kwargs['year'])
+        PlayerMatchInfo.objects.bulk_create([
+            PlayerMatchInfo(player=season_player.player, match=self.object)
+            for season_player in season_players
+        ])
+        return response
+
 class MatchUpdate(generic.edit.UpdateView):
     model = Match
     template_name_suffix = '_create'
@@ -52,7 +61,16 @@ class MatchUpdate(generic.edit.UpdateView):
     def get_context_data(self, **kwargs):
         context = super(MatchUpdate, self).get_context_data(**kwargs)
         context['season'] = Season.objects.get(year=self.kwargs['year'])
+        context['match_players'] = PlayerMatchInfo.objects.filter(match=self.kwargs['pk'])
         return context
+
+def MatchPlayersUpdate(request, year, pk):
+    for key, val in request.POST.items():
+        if key != 'csrfmiddlewaretoken':
+            match_player = PlayerMatchInfo.objects.get(player_id=key)
+            match_player.available = val
+            match_player.save()
+    return HttpResponseRedirect(reverse_lazy('core:match_update', kwargs={'year':year, 'pk':pk}))
 
 class MatchDelete(ObjectFromPostMixin, generic.edit.DeleteView):
     model = Match

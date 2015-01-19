@@ -76,7 +76,8 @@ class PlayerSeasonInfo(models.Model):
 
     @property
     def games_played(self):
-        return PlayerMatchInfo.objects.filter(player=self.player, match__season=self.season).count()
+        return PlayerMatchInfo.objects.filter(player=self.player,
+            match__season=self.season).exclude(team=None).count()
 
     @property
     def owed(self):
@@ -86,7 +87,7 @@ class PlayerSeasonInfo(models.Model):
             return self.season.substitute_rate*self.games_played
 
     def __unicode__(self):
-        return '%s (%d)' % (self.player.full_name, self.year)
+        return '%s (%d)' % (self.player.full_name, self.season.year)
 
 
 class Match(models.Model):
@@ -117,20 +118,20 @@ class Match(models.Model):
 class PlayerMatchInfo(models.Model):
     player = models.ForeignKey(Player)
     match = models.ForeignKey(Match)
-    rating = models.PositiveIntegerField()
+    rating = models.PositiveIntegerField(default=1)
     available = models.BooleanField(default=True)
-    position_A = models.PositiveIntegerField(choices=choices((1, 2, 3, 4)))
-    position_M = models.PositiveIntegerField(choices=choices((1, 2, 3, 4)))
-    position_D = models.PositiveIntegerField(choices=choices((1, 2, 3, 4)))
-    position_G = models.PositiveIntegerField(choices=choices((1, 2, 3, 4)))
+    position_A = models.PositiveIntegerField(default=1, choices=choices((1, 2, 3, 4)))
+    position_M = models.PositiveIntegerField(default=1, choices=choices((1, 2, 3, 4)))
+    position_D = models.PositiveIntegerField(default=1, choices=choices((1, 2, 3, 4)))
+    position_G = models.PositiveIntegerField(default=1, choices=choices((1, 2, 3, 4)))
 
-    team = models.CharField(max_length=1, null=True, default=None,
+    team = models.CharField(max_length=1, blank=True, null=True, default=None,
                             choices=[(None, 'N/A')] + choices('12'))
     position = models.CharField(max_length=1, choices=choices('AMDG'))
 
     yellow_cards = models.PositiveIntegerField(default=0)
     red_cards = models.PositiveIntegerField(default=0)
-    star = models.CharField(max_length=1, null=True, default=None,
+    star = models.CharField(max_length=1, blank=True, null=True, default=None,
                             choices=[(None, 'N/A')] + choices('123'))
 
     def __unicode__(self):

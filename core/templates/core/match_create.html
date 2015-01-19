@@ -20,7 +20,8 @@
             </div>
             <div class="form-group col-lg-4">
                 <label for="cancelled">État</label>
-                <select class="form-control" name="cancelled" id="cancelled">
+                <select class="form-control" name="cancelled" id="cancelled"
+                    {% if not form.instance.pk %}disabled{% endif %}>
                     <option value=False
                         {% if form.cancelled.value == False %}
                         selected="selected"
