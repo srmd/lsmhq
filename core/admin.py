@@ -9,7 +9,6 @@ admin.site.unregister(User)
 
 class PlayerAdminForm(forms.ModelForm):
     class Meta:
-        model = Player
         labels = {
             'cip': 'CIP'
         }
